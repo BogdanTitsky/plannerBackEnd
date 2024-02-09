@@ -1,0 +1,9 @@
+# Ігнорувати теку node_modules
+node_modules/
+
+# Ігнорувати файли, які генеруються npm
+npm-debug.log
+yarn-error.log
+
+# Ігнорувати теку з збереженими залежностями
+.pnp/
