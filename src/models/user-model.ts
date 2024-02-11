@@ -1,3 +1,4 @@
+import Joi from 'joi';
 import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema(
@@ -20,6 +21,12 @@ const userSchema = new mongoose.Schema(
         timestamps: true,
     }
 );
+
+export const schemaSignUp = Joi.object({
+    name: Joi.string().required().min(1),
+    email: Joi.string().email(),
+    password: Joi.string().required().min(6),
+});
 
 const User = mongoose.model('User', userSchema);
 

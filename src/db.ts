@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
+import 'dotenv/config';
+const { DB_HOST } = process.env;
 
 const connectToDatabase = async () => {
     try {
-        const connection = mongoose.connect(
-            'mongodb+srv://bogdantitsky:rBbSRrWqigvd4HO7@cluster0.8giyfh7.mongodb.net/planer?retryWrites=true&w=majority'
-        );
+        const connection = mongoose.connect(DB_HOST);
         if (connection) {
             console.log('Connection established');
         }

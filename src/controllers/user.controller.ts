@@ -5,8 +5,10 @@ import jwt from 'jsonwebtoken';
 import { Types } from 'mongoose';
 import { IUser } from '../types';
 
+const { SECRET_KEY } = process.env;
+
 const getUserToken = (_id: string | Types.ObjectId) => {
-    const authenticatedUserToken = jwt.sign({ _id }, 'express', {
+    const authenticatedUserToken = jwt.sign({ _id }, SECRET_KEY, {
         expiresIn: '7d',
     });
     return authenticatedUserToken;
@@ -38,30 +40,25 @@ export const createUser = async (request: Request, response: Response) => {
 };
 
 export const loginUser = async (request: Request, response: Response) => {
-    try {
-        const { email, password }: IUser = request.body;
-        const existingUser = await User.findOne({ email });
+    const { email, password }: IUser = request.body;
+    const existingUser = await User.findOne({ email });
 
-        if (!existingUser) {
-            return response.status(409).send("user doesn't exist");
-        }
+    if (!existingUser) {
+        return response.status(409).send("user doesn't exist");
+    }
 
-        const isPasswordIdentical = await bcrypt.compare(password, (await existingUser).password);
+    const isPasswordIdentical = await bcrypt.compare(password, existingUser.password);
 
-        if (isPasswordIdentical) {
-            const token = getUserToken(existingUser._id);
-            return response.send({
-                token,
-                user: {
-                    email: existingUser.email,
-                    name: existingUser.name,
-                },
-            });
-        } else {
-            return response.status(400).send({ message: 'Wrong credentials' });
-        }
-    } catch (error) {
-        console.log('error in loginUser', error);
-        throw error;
+    if (isPasswordIdentical) {
+        const token = getUserToken(existingUser._id);
+        return response.send({
+            token,
+            user: {
+                email: existingUser.email,
+                name: existingUser.name,
+            },
+        });
+    } else {
+        return response.status(400).json({ message: 'Wrong credentials' });
     }
 };

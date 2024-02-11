@@ -1,21 +1,20 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
 import connectToDatabase from './db';
 import userRoutes from './routes/user.routes';
+import categoryRoutes from './routes/categories.routes';
+import taskRoutes from './routes/tasks.routes';
 
-const application = express();
+const { PORT } = process.env;
 
-application.use(express.json());
-
-const PORT = 3000;
+const app = express();
+app.use(express.json());
 
 connectToDatabase();
 
-application.get('/ping', (request: Request, response: Response) => {
-    response.send('Pong');
-});
+app.use('/user', userRoutes);
+app.use('/categories', categoryRoutes);
+app.use('/tasks', taskRoutes);
 
-application.use('/user', userRoutes);
-
-application.listen(PORT, () => {
-    console.log('Server started!');
+app.listen(PORT, () => {
+    console.log(`Server started with port ${PORT}`);
 });
